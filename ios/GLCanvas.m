@@ -42,6 +42,7 @@ NSArray* diff (NSArray* a, NSArray* b) {
   BOOL _deferredRendering; // This flag indicates a render has been deferred to the next frame (when using contents)
 
   GLint defaultFBO;
+  GLuint buffer;
 
   NSMutableArray *_preloaded;
   BOOL _dirtyOnLoad;
@@ -65,6 +66,7 @@ NSArray* diff (NSArray* a, NSArray* b) {
     _captureScheduled = false;
     _dirtyOnLoad = true;
     _neverRendered = true;
+    buffer = 0;
     self.context = [bridge.rnglContext getContext];
   }
   return self;
@@ -289,8 +291,21 @@ RCT_NOT_IMPLEMENTED(-init)
         }
       }
 
+      GLfloat *vdata = NULL;
+      unsigned long vcount = 0;
+      if (data.vdata) {
+        vcount = [data.vdata count] / 2;
+        vdata = malloc(2 * vcount * sizeof(GLfloat));
+        unsigned int i = 0;
+        for (NSNumber *elem in data.vdata) {
+          vdata[i++] = [elem floatValue];
+        }
+      }
+
       return [[GLRenderData alloc]
               initWithShader:shader
+              withVdata:vdata
+              withVcount:vcount
               withUniforms:uniforms
               withTextures:textures
               withWidth:(int)([width floatValue] * [pixelRatio floatValue])
@@ -500,7 +515,17 @@ RCT_NOT_IMPLEMENTED(-init)
       RCT_PROFILE_END_EVENT(0, @"gl", nil);
 
       RCT_PROFILE_BEGIN_EVENT(0, @"bind shader", nil);
-      [renderData.shader bind];
+
+      if (renderData.vdata) {
+        if (buffer == 0) {
+          glGenBuffers(1, &buffer);
+        }
+        [renderData.shader bindWithBuffer:buffer];
+        glBufferData(GL_ARRAY_BUFFER, 2 * renderData.vcount * sizeof(GLfloat), renderData.vdata, GL_STATIC_DRAW);
+      } else {
+        [renderData.shader bind];
+      }
+
       RCT_PROFILE_END_EVENT(0, @"gl", nil);
 
       RCT_PROFILE_BEGIN_EVENT(0, @"bind textures", nil);
@@ -520,7 +545,8 @@ RCT_NOT_IMPLEMENTED(-init)
       RCT_PROFILE_BEGIN_EVENT(0, @"draw", nil);
       glClearColor(0.0, 0.0, 0.0, 0.0);
       glClear(GL_COLOR_BUFFER_BIT);
-      glDrawArrays(GL_TRIANGLES, 0, 6);
+      glDrawArrays(GL_TRIANGLES, 0, renderData.vdata ? renderData.vcount : 6);
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
       RCT_PROFILE_END_EVENT(0, @"gl", nil);
 
       RCT_PROFILE_END_EVENT(0, @"gl", nil);
