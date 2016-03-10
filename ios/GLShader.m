@@ -93,6 +93,14 @@ GLuint compileShader (NSString* shaderName, NSString* shaderString, GLenum shade
   glVertexAttribPointer(pointerLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
+- (void) bindWithBuffer:(GLuint)buf
+{
+  glUseProgram(program);
+  glBindBuffer(GL_ARRAY_BUFFER, buf);
+  glEnableVertexAttribArray(pointerLoc);
+  glVertexAttribPointer(pointerLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+}
+
 - (void) setUniform: (NSString *)name withValue:(id)value
 {
   if ([_uniformLocations objectForKey:name] == nil) {

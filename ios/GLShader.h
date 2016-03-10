@@ -25,6 +25,7 @@ NS_ENUM(NSInteger) {
  * Bind the shader program as the current one
  */
 - (void) bind;
+- (void) bindWithBuffer: (GLuint)buf;
 
 - (bool) ensureCompiles: (NSError**)error;
 
