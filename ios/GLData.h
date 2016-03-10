@@ -5,6 +5,7 @@
 @interface GLData: NSObject
 
 @property (nonatomic) NSNumber *shader;
+@property (nonatomic) NSArray *vdata;
 @property (nonatomic) NSDictionary *uniforms;
 @property (nonatomic) NSNumber *width;
 @property (nonatomic) NSNumber *height;
@@ -14,6 +15,7 @@
 @property (nonatomic) NSArray *children;
 
 -(instancetype)initWithShader: (NSNumber *)shader
+                initWithVdata: (NSArray *)vdata
                  withUniforms: (NSDictionary *)uniforms
                     withWidth: (NSNumber *)width
                    withHeight: (NSNumber *)height

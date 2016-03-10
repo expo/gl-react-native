@@ -3,6 +3,7 @@
 @implementation GLData
 
 -(instancetype)initWithShader: (NSNumber *)shader
+                initWithVdata: (NSArray *)vdata
                  withUniforms: (NSDictionary *)uniforms
                     withWidth: (NSNumber *)width
                    withHeight: (NSNumber *)height
@@ -13,6 +14,7 @@
 {
   if ((self = [super init])) {
     self.shader = shader;
+    self.vdata = vdata;
     self.uniforms = uniforms;
     self.width = width;
     self.height = height;

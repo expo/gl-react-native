@@ -14,6 +14,16 @@
   NSNumber *fboId = [self NSNumber:json[@"fboId"]];
   NSArray *contextChildrenJSON = [self NSArray: json[@"contextChildren"]];
   NSArray *childrenJSON = [self NSArray: json[@"children"]];
+
+  NSMutableArray *vdata = NULL;
+  NSObject *vdataJSON = json[@"vdata"];
+  if (vdataJSON) {
+    vdata = [NSMutableArray array];
+    for (NSObject *vJSON in [self NSArray:vdataJSON]) {
+      [vdata addObject:[self NSNumber:vJSON]];
+    }
+  }
+
   
   NSMutableArray *children = [NSMutableArray array];
   for (NSObject *childJSON in childrenJSON) {
@@ -28,6 +38,7 @@
   }
 
   return [[GLData alloc] initWithShader: shader
+                          initWithVdata: vdata
                            withUniforms: uniforms
                               withWidth: width
                              withHeight: height
