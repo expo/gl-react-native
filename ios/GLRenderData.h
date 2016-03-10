@@ -5,6 +5,8 @@
 @interface GLRenderData : NSObject
 
 @property (nonatomic) GLShader *shader;
+@property (nonatomic) GLfloat *vdata;
+@property (nonatomic) unsigned long vcount;
 @property (nonatomic) NSDictionary *uniforms;
 @property (nonatomic) NSDictionary *textures;
 @property (nonatomic) int width;
@@ -14,6 +16,8 @@
 @property (nonatomic) NSArray *children;
 
 -(instancetype) initWithShader: (GLShader *)shader
+                     withVdata: (GLfloat *)vdata
+                    withVcount: (unsigned long)vcount
                   withUniforms:(NSDictionary *)uniforms
                   withTextures: (NSDictionary *)textures
                      withWidth: (int)width
